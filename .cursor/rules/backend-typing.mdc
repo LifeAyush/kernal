@@ -1,0 +1,29 @@
+---
+description: Require type annotations on all backend Python functions and variables
+globs: core/**/*.py,apps/api/**/*.py,apps/linkedin/**/*.py,cli/**/*.py
+alwaysApply: true
+---
+
+# Backend typing
+
+Annotate every function (parameters and return type). Use `-> None` if it returns nothing. Annotate variables (locals, attributes, constants). Do not rely on inference for public APIs or values that cross a function boundary.
+
+Use Python 3.12 builtins (`list[str]`, `dict[str, str]`). Do not use `typing.List` or `typing.Dict`.
+
+Pattern (existing health handler):
+
+```python
+@app.get("/api/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+```
+
+```python
+# BAD
+def health():
+    return {"status": "ok"}
+
+# GOOD
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+```

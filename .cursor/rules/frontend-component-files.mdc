@@ -1,0 +1,39 @@
+---
+description: Each frontend component/view lives in its own directory with index, types, helpers, styles, and optional constants
+globs: apps/web/**/*.{ts,tsx,css}
+alwaysApply: true
+---
+
+# Frontend component files
+
+When creating a component or view, use a directory (not a single file) with these files:
+
+- `index.tsx` — JSX, `useState`, `useEffect`, render
+- `types.ts` — types only
+- `helpers.ts` — non-trivial functions
+- `styles.css` — all styles; no inline styles
+- `constants.ts` — only when the component has many constants
+
+Do not put types, helpers, or CSS in `index.tsx`. Do not use `style={{}}` or other inline styles.
+
+Pattern (`types.ts`):
+
+```ts
+type Health = 'loading' | 'ok' | 'error'
+```
+
+```tsx
+# BAD
+function App() {
+  const [health, setHealth] = useState('loading')
+  return <p style={{ color: 'green' }}>{health}</p>
+}
+
+# GOOD
+HealthView/
+  index.tsx
+  types.ts
+  helpers.ts
+  styles.css
+  constants.ts   # only if needed
+```

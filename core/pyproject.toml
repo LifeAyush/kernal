@@ -1,0 +1,10 @@
+[project]
+name = "kernal-core"
+version = "0.1.0"
+description = "Shared workbench core: storage, context, llm, workflow lifecycle"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

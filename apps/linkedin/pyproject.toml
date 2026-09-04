@@ -1,0 +1,13 @@
+[project]
+name = "kernal-linkedin"
+version = "0.1.0"
+description = "LinkedIn app module (discovery, ranking, generation, workflows)"
+requires-python = ">=3.12"
+dependencies = ["kernal-core"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+kernal-core = { workspace = true }

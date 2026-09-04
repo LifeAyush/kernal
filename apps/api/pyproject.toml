@@ -1,0 +1,18 @@
+[project]
+name = "kernal-api"
+version = "0.1.0"
+description = "FastAPI entrypoint for the Kernal workbench"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "kernal-core",
+    "pydantic-settings",
+    "uvicorn[standard]",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+kernal-core = { workspace = true }

@@ -1,0 +1,25 @@
+main {
+  padding: 3rem 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+}
+
+p {
+  margin: 0;
+  color: #555;
+}
+
+strong[data-status='ok'] {
+  color: #0a7a32;
+}
+
+strong[data-status='error'] {
+  color: #b42318;
+}
+
+strong[data-status='loading'] {
+  color: #555;
+}
