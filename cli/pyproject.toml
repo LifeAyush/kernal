@@ -3,7 +3,7 @@ name = "kernal-cli"
 version = "0.1.0"
 description = "Local CLI for session-bound work that writes through core/storage"
 requires-python = ">=3.12"
-dependencies = ["kernal-core"]
+dependencies = ["kernal-core", "kernal-linkedin"]
 
 [project.scripts]
 kernal = "kernal_cli.__main__:main"
@@ -14,3 +14,4 @@ build-backend = "hatchling.build"
 
 [tool.uv.sources]
 kernal-core = { workspace = true }
+kernal-linkedin = { workspace = true }

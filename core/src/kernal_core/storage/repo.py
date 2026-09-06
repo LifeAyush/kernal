@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -66,7 +66,7 @@ def get_context() -> UserContextRecord | None:
 
 
 def upsert_context(interests: list[str], topics: list[str]) -> UserContextRecord:
-    now: datetime = datetime.now(timezone.utc)
+    now: datetime = datetime.now(UTC)
     session: Session = session_scope()
     try:
         row: UserContext | None = session.get(UserContext, _CONTEXT_ID)
@@ -115,7 +115,7 @@ def list_people() -> list[PersonRecord]:
 def upsert_people(people: list[PersonInput]) -> tuple[int, int]:
     inserted: int = 0
     updated: int = 0
-    now: datetime = datetime.now(timezone.utc)
+    now: datetime = datetime.now(UTC)
     session: Session = session_scope()
     try:
         person: PersonInput
@@ -147,53 +147,59 @@ def upsert_people(people: list[PersonInput]) -> tuple[int, int]:
         session.close()
 
 
+def _run_record(row: WorkflowRun) -> WorkflowRunRecord:
+    return WorkflowRunRecord(
+        id=row.id,
+        workflow_name=row.workflow_name,
+        status=row.status,
+        started_at=row.started_at,
+        finished_at=row.finished_at,
+        error=row.error,
+    )
+
+
 def list_runs() -> list[WorkflowRunRecord]:
     session: Session = session_scope()
     try:
         rows: list[WorkflowRun] = list(
             session.scalars(select(WorkflowRun).order_by(WorkflowRun.started_at.desc()))
         )
-        return [
-            WorkflowRunRecord(
-                id=row.id,
-                workflow_name=row.workflow_name,
-                status=row.status,
-                started_at=row.started_at,
-                finished_at=row.finished_at,
-                error=row.error,
-            )
-            for row in rows
-        ]
+        return [_run_record(row) for row in rows]
     finally:
         session.close()
 
 
-def insert_run(
-    workflow_name: str,
-    status: str,
-    started_at: datetime,
-    finished_at: datetime | None,
-    error: str | None,
-) -> WorkflowRunRecord:
+def start_run(workflow_name: str) -> WorkflowRunRecord:
+    now: datetime = datetime.now(UTC)
     session: Session = session_scope()
     try:
         row: WorkflowRun = WorkflowRun(
             workflow_name=workflow_name,
-            status=status,
-            started_at=started_at,
-            finished_at=finished_at,
-            error=error,
+            status="running",
+            started_at=now,
+            finished_at=None,
+            error=None,
         )
         session.add(row)
         session.commit()
         session.refresh(row)
-        return WorkflowRunRecord(
-            id=row.id,
-            workflow_name=row.workflow_name,
-            status=row.status,
-            started_at=row.started_at,
-            finished_at=row.finished_at,
-            error=row.error,
-        )
+        return _run_record(row)
+    finally:
+        session.close()
+
+
+def finish_run(run_id: int, status: str, error: str | None) -> WorkflowRunRecord:
+    now: datetime = datetime.now(UTC)
+    session: Session = session_scope()
+    try:
+        row: WorkflowRun | None = session.get(WorkflowRun, run_id)
+        if row is None:
+            raise ValueError(f"workflow run {run_id} not found")
+        row.status = status
+        row.finished_at = now
+        row.error = error
+        session.commit()
+        session.refresh(row)
+        return _run_record(row)
     finally:
         session.close()

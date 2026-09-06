@@ -230,10 +230,14 @@ version = "0.1.0"
 source = { editable = "cli" }
 dependencies = [
     { name = "kernal-core" },
+    { name = "kernal-linkedin" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "kernal-core", editable = "core" }]
+requires-dist = [
+    { name = "kernal-core", editable = "core" },
+    { name = "kernal-linkedin", editable = "apps/linkedin" },
+]
 
 [[package]]
 name = "kernal-core"
