@@ -1,6 +1,8 @@
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
+from kernal_core.settings import settings
+
 _engine: Engine | None = None
 _SessionLocal: sessionmaker[Session] | None = None
 
@@ -26,6 +28,10 @@ def configure(database_url: str | None) -> None:
         return
     _engine = create_engine(_normalize_url(database_url), pool_pre_ping=True)
     _SessionLocal = sessionmaker(bind=_engine)
+
+
+def configure_from_env() -> None:
+    configure(settings.database_url)
 
 
 def is_available() -> bool:

@@ -1,6 +1,11 @@
 """Postgres memory. The only place that may know how we connect to Supabase."""
 
-from kernal_core.storage.engine import StorageUnavailable, configure, is_available
+from kernal_core.storage.engine import (
+    StorageUnavailable,
+    configure,
+    configure_from_env,
+    is_available,
+)
 from kernal_core.storage.repo import (
     PersonInput,
     PersonRecord,
@@ -23,6 +28,7 @@ __all__ = [
     "UserContextRecord",
     "WorkflowRunRecord",
     "configure",
+    "configure_from_env",
     "finish_run",
     "get_context",
     "init_schema",

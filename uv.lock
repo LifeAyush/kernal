@@ -282,6 +282,7 @@ version = "0.1.0"
 source = { editable = "core" }
 dependencies = [
     { name = "psycopg", extra = ["binary", "pool"] },
+    { name = "pydantic-settings" },
     { name = "sarvamai" },
     { name = "sqlalchemy" },
 ]
@@ -289,6 +290,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "psycopg", extras = ["binary", "pool"] },
+    { name = "pydantic-settings" },
     { name = "sarvamai" },
     { name = "sqlalchemy", specifier = ">=2" },
 ]

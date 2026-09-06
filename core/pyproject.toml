@@ -5,6 +5,7 @@ description = "Shared workbench core: storage, context, llm, workflow lifecycle"
 requires-python = ">=3.12"
 dependencies = [
     "psycopg[binary,pool]",
+    "pydantic-settings",
     "sarvamai",
     "sqlalchemy>=2",
 ]

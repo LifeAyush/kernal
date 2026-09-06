@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     )
 
     cors_origins: str = "http://localhost:5173"
-    database_url: str | None = None
     cron_secret: str | None = None
 
     @property

@@ -2,16 +2,19 @@ import argparse
 import sys
 from collections.abc import Callable
 
-from kernal_cli.helpers import database_url
 from kernal_core.llm import LlmUnavailable, complete
-from kernal_core.storage import WorkflowRunRecord, configure, init_schema, is_available
+from kernal_core.storage import (
+    WorkflowRunRecord,
+    configure_from_env,
+    init_schema,
+    is_available,
+)
 from kernal_core.workflows import execute
 from kernal_linkedin.workflows import get_workflow
 
 
 def _run(workflow_name: str) -> int:
-    url: str | None = database_url()
-    configure(url)
+    configure_from_env()
     if not is_available():
         print("DATABASE_URL is not set", file=sys.stderr)
         return 1

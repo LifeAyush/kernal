@@ -7,12 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from kernal_api.routes.memory import router as memory_router
 from kernal_api.routes.workflows import router as workflows_router
 from kernal_api.settings import settings
-from kernal_core.storage import configure, init_schema, is_available
+from kernal_core.storage import configure_from_env, init_schema, is_available
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    configure(settings.database_url)
+    configure_from_env()
     if is_available():
         init_schema()
     yield

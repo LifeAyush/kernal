@@ -132,6 +132,8 @@ kernal/
 
 Do not grow a `data/` directory as durable memory.
 
+Core loads `DATABASE_URL` and `SARVAM_API_KEY` (and optional `LLM_MODEL`) via `kernal_core.settings`. The API only adds CORS and `CRON_SECRET`. CLI and FastAPI both call `configure_from_env()` — do not import `kernal_api` from the CLI.
+
 ## Env vars
 
 | Variable | Where | Purpose |
