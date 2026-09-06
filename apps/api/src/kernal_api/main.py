@@ -1,9 +1,24 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from kernal_api.routes.memory import router as memory_router
+from kernal_api.routes.workflows import router as workflows_router
 from kernal_api.settings import settings
+from kernal_core.storage import configure, init_schema, is_available
 
-app: FastAPI = FastAPI(title="Kernal")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    configure(settings.database_url)
+    if is_available():
+        init_schema()
+    yield
+
+
+app: FastAPI = FastAPI(title="Kernal", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,6 +27,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(memory_router)
+app.include_router(workflows_router)
 
 
 @app.get("/api/health")

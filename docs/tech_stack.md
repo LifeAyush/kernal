@@ -24,7 +24,7 @@ If a decision here conflicts with a convenience in a vendor SDK, this file wins.
 Install and run Python only through the project venv:
 
 - `uv sync` — creates/updates **repo-root `.venv`**
-- `uv run …` or `.venv/bin/…` / `source .venv/bin/activate` — same venv
+- `source .venv/bin/activate` then run `uvicorn` / `kernal` — do not use `uv run` for app commands
 - Host tools allowed: `uv`, Python 3.12, Node/npm
 - Do **not** `pip install`, `pip install --user`, or `brew install` FastAPI, ruff, or any project library onto the machine
 - Do **not** use a second venv (`venv/`, per-package envs, or a global interpreter)
@@ -51,6 +51,13 @@ Supabase exists so workflows can persist and reuse context (people seen, posts s
 - Use local `data/`, SQLite, or the Cloud Run filesystem as source of truth.
 
 Daily cron (`linkedin.find_people`, `linkedin.engage_posts`) counts as activity and should prevent pause under normal use. Do not assume that if someone disables the schedule.
+
+### Setting `DATABASE_URL`
+
+1. In Supabase: Project Settings → Database → connection string (URI). Prefer the **session** pooler or direct URI. Add `sslmode=require` if it is not already in the query string.
+2. Put it in `apps/api/.env` as `DATABASE_URL=postgresql://...` (never commit `.env`).
+3. Optional: run [`core/src/kernal_core/storage/schema.sql`](../core/src/kernal_core/storage/schema.sql) in the Supabase SQL editor before the API has a URL. When `DATABASE_URL` is set, the API also runs `create_all` on startup.
+4. SQLAlchemy is configured as `postgresql+psycopg://` automatically. Do not add `supabase-py` or the JS client.
 
 ## LLM
 

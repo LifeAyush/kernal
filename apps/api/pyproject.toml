@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi",
     "kernal-core",
+    "kernal-linkedin",
     "pydantic-settings",
     "uvicorn[standard]",
 ]
@@ -16,3 +17,4 @@ build-backend = "hatchling.build"
 
 [tool.uv.sources]
 kernal-core = { workspace = true }
+kernal-linkedin = { workspace = true }

@@ -3,7 +3,10 @@ name = "kernal-core"
 version = "0.1.0"
 description = "Shared workbench core: storage, context, llm, workflow lifecycle"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "psycopg[binary,pool]",
+    "sqlalchemy>=2",
+]
 
 [build-system]
 requires = ["hatchling"]
