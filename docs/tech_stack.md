@@ -14,7 +14,7 @@ If a decision here conflicts with a convenience in a vendor SDK, this file wins.
 | Backend host | Google Cloud Run (Dockerfile, scale to zero) |
 | Context / memory | Supabase **Postgres only**, via `DATABASE_URL` |
 | Scheduler | GitHub Actions cron → authenticated FastAPI routes (or Cloud Run Jobs) |
-| LLM | `core/llm` interface; default **Gemini Flash**; swap with `LLM_PROVIDER` |
+| LLM | `core/llm` interface; default **Sarvam 105B** (`complete(prompt) -> str`) |
 | Secrets | Platform env vars. Never commit keys |
 | Auth (v1) | CORS locked to the Pages origin; cron/workflow routes gated by `CRON_SECRET`. No user-auth system |
 | Local Python | Repo-root **`.venv` only** (via `uv sync` / `uv run`) |
@@ -62,9 +62,9 @@ Daily cron (`linkedin.find_people`, `linkedin.engage_posts`) counts as activity 
 ## LLM
 
 - Workflows call `core/llm` only. No vendor SDK in app modules.
-- Default provider: Gemini Flash (`LLM_PROVIDER=gemini`).
-- Swap providers with env (`GEMINI_API_KEY`, later `OPENAI_API_KEY` / `GROQ_API_KEY`, etc.).
-- Hosting can stay $0; LLM tokens may not. Prefer the Flash free tier until it is no longer enough.
+- Default: Sarvam 105B via `kernal_core.llm.complete`. Key: `SARVAM_API_KEY`. Optional `LLM_MODEL` (default `sarvam-105b`).
+- `sarvamai` is imported only in `kernal_core.llm`.
+- Hosting can stay $0; LLM tokens use the Sarvam credit balance.
 
 ## Deploy and runtime
 
@@ -72,7 +72,7 @@ Daily cron (`linkedin.find_people`, `linkedin.engage_posts`) counts as activity 
 GitHub Actions (cron) --POST /workflows/... + CRON_SECRET--> Cloud Run (FastAPI)
 Cloudflare Pages (SPA) --HTTPS + CORS--> Cloud Run (FastAPI)
 Cloud Run --DATABASE_URL--> Supabase Postgres
-Cloud Run --core/llm--> Gemini Flash (or other provider)
+Cloud Run --core/llm--> Sarvam 105B
 ```
 
 - FastAPI is the only public API. CORS allowlist = Pages origin.
@@ -137,8 +137,8 @@ Do not grow a `data/` directory as durable memory.
 | Variable | Where | Purpose |
 |---|---|---|
 | `DATABASE_URL` | Cloud Run | Supabase Postgres connection string |
-| `LLM_PROVIDER` | Cloud Run | Default `gemini` |
-| `GEMINI_API_KEY` | Cloud Run | Default LLM |
+| `SARVAM_API_KEY` | Cloud Run | Default LLM (Sarvam) |
+| `LLM_MODEL` | Cloud Run | Optional; default `sarvam-105b` |
 | `CRON_SECRET` | Cloud Run + GitHub Actions | Gate workflow trigger routes |
 | `CORS_ORIGINS` | Cloud Run | Pages origin(s) |
 | `VITE_API_URL` | Cloudflare Pages build | FastAPI base URL |

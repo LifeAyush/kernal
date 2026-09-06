@@ -3,6 +3,7 @@ import sys
 from collections.abc import Callable
 
 from kernal_cli.helpers import database_url
+from kernal_core.llm import LlmUnavailable, complete
 from kernal_core.storage import WorkflowRunRecord, configure, init_schema, is_available
 from kernal_core.workflows import execute
 from kernal_linkedin.workflows import get_workflow
@@ -25,6 +26,16 @@ def _run(workflow_name: str) -> int:
     return 0
 
 
+def _complete(prompt: str) -> int:
+    try:
+        text: str = complete(prompt)
+    except LlmUnavailable as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(text)
+    return 0
+
+
 def main() -> None:
     parser: argparse.ArgumentParser = argparse.ArgumentParser(prog="kernal")
     subparsers: argparse._SubParsersAction[argparse.ArgumentParser] = parser.add_subparsers(
@@ -33,9 +44,16 @@ def main() -> None:
     )
     run_parser: argparse.ArgumentParser = subparsers.add_parser("run", help="Execute a workflow")
     run_parser.add_argument("workflow_name")
+    complete_parser: argparse.ArgumentParser = subparsers.add_parser(
+        "complete",
+        help="Send a prompt through core/llm",
+    )
+    complete_parser.add_argument("prompt")
     args: argparse.Namespace = parser.parse_args()
     if args.command == "run":
         raise SystemExit(_run(args.workflow_name))
+    if args.command == "complete":
+        raise SystemExit(_complete(args.prompt))
 
 
 if __name__ == "__main__":
